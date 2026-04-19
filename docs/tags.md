@@ -19,18 +19,24 @@ envault tags find production
 
 # Clear all tags from a file
 envault tags clear .env
+
+# List all tags across all tracked files
+envault tags all
 ```
 
 ## Python API
 
 ```python
-from envault.tags import add_tag, remove_tag, get_tags, find_by_tag, clear_tags
+from envault.tags import add_tag, remove_tag, get_tags, find_by_tag, clear_tags, list_all_tags
 
 add_tag(".env", "production")
 print(get_tags(".env"))        # ['production']
 print(find_by_tag("production"))  # ['.env']
 remove_tag(".env", "production")
 clear_tags(".env")
+
+# Get a mapping of every tracked file to its tags
+print(list_all_tags())  # {'.env': ['production', 'team-a'], '.env.staging': ['staging']}
 ```
 
 ## Storage
