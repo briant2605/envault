@@ -31,7 +31,14 @@ def encrypt(plaintext: str, password: str) -> bytes:
 
 
 def decrypt(data: bytes, password: str) -> str:
-    """Decrypt data (salt + ciphertext) with a password. Returns plaintext string."""
+    """Decrypt data (salt + ciphertext) with a password. Returns plaintext string.
+
+    Raises:
+        ValueError: If the data is too short to contain a valid salt, or if
+            decryption fails due to an invalid password or corrupted data.
+    """
+    if len(data) <= SALT_SIZE:
+        raise ValueError("Decryption failed: data is too short to be valid.")
     salt, token = data[:SALT_SIZE], data[SALT_SIZE:]
     key = derive_key(password, salt)
     try:
