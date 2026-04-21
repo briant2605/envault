@@ -29,6 +29,15 @@ def test_tag_add_duplicate(runner):
     assert result.output.count("prod") == 1
 
 
+def test_tag_add_multiple(runner):
+    """Adding multiple distinct tags to the same entry should list all of them."""
+    runner.invoke(tags_cli, ["add", ".env", "dev"])
+    runner.invoke(tags_cli, ["add", ".env", "staging"])
+    result = runner.invoke(tags_cli, ["list", ".env"])
+    assert "dev" in result.output
+    assert "staging" in result.output
+
+
 def test_tag_list(runner):
     runner.invoke(tags_cli, ["add", ".env", "alpha"])
     result = runner.invoke(tags_cli, ["list", ".env"])
@@ -49,6 +58,16 @@ def test_tag_remove(runner):
 def test_tag_remove_missing(runner):
     result = runner.invoke(tags_cli, ["remove", ".env", "ghost"])
     assert result.exit_code != 0
+
+
+def test_tag_remove_leaves_other_tags(runner):
+    """Removing one tag should not affect other tags on the same entry."""
+    runner.invoke(tags_cli, ["add", ".env", "keep"])
+    runner.invoke(tags_cli, ["add", ".env", "drop"])
+    runner.invoke(tags_cli, ["remove", ".env", "drop"])
+    result = runner.invoke(tags_cli, ["list", ".env"])
+    assert "keep" in result.output
+    assert "drop" not in result.output
 
 
 def test_tag_find(runner):
