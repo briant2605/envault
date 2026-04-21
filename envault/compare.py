@@ -22,6 +22,19 @@ class CompareResult:
     def has_differences(self) -> bool:
         return bool(self.only_in_left or self.only_in_right or self.changed)
 
+    def summary(self) -> str:
+        """Return a human-readable summary of the comparison result."""
+        lines = []
+        if self.only_in_left:
+            lines.append(f"Only in left ({len(self.only_in_left)}): {', '.join(self.only_in_left)}")
+        if self.only_in_right:
+            lines.append(f"Only in right ({len(self.only_in_right)}): {', '.join(self.only_in_right)}")
+        if self.changed:
+            lines.append(f"Changed ({len(self.changed)}): {', '.join(k for k, _, _ in self.changed)}")
+        if not lines:
+            return "No differences found."
+        return "\n".join(lines)
+
 
 def _parse_env(text: str) -> Dict[str, str]:
     """Parse env text into a dict, ignoring comments and blank lines."""
