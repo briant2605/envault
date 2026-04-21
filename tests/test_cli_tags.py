@@ -21,6 +21,14 @@ def test_tag_add(runner):
     assert "prod" in result.output
 
 
+def test_tag_add_duplicate(runner):
+    """Adding the same tag twice should not result in duplicates in the list."""
+    runner.invoke(tags_cli, ["add", ".env", "prod"])
+    runner.invoke(tags_cli, ["add", ".env", "prod"])
+    result = runner.invoke(tags_cli, ["list", ".env"])
+    assert result.output.count("prod") == 1
+
+
 def test_tag_list(runner):
     runner.invoke(tags_cli, ["add", ".env", "alpha"])
     result = runner.invoke(tags_cli, ["list", ".env"])
