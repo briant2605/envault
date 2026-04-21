@@ -57,3 +57,14 @@ def test_set_profile_overwrites(isolated_profiles):
     profile_mod.set_profile("dev", "old")
     profile_mod.set_profile("dev", "new")
     assert profile_mod.get_profile("dev")["password"] == "new"
+
+
+def test_set_profile_persists_to_disk(isolated_profiles):
+    """Ensure that set_profile writes data that survives a fresh load."""
+    profile_mod.set_profile("dev", "secret123")
+
+    # Reload profiles from disk by reading the file directly
+    assert isolated_profiles.exists(), "Profiles file should have been created"
+    data = json.loads(isolated_profiles.read_text())
+    assert "dev" in data
+    assert data["dev"]["password"] == "secret123"
