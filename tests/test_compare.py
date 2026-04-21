@@ -50,6 +50,16 @@ def test_parse_env_strips_quotes():
     assert _parse_env("KEY='value'") == {"KEY": "value"}
 
 
+def test_parse_env_empty_string():
+    """Parsing an empty string should return an empty dict."""
+    assert _parse_env("") == {}
+
+
+def test_parse_env_value_with_equals_sign():
+    """Values that contain '=' should be preserved correctly."""
+    assert _parse_env("KEY=val=ue") == {"KEY": "val=ue"}
+
+
 # --- compare_env_texts ---
 
 def test_compare_only_in_left():
@@ -91,6 +101,14 @@ def test_compare_env_files(tmp_path: Path):
     result = compare_env_files(a, b)
     assert isinstance(result, CompareResult)
     assert result.has_differences
+
+
+def test_compare_env_files_identical(tmp_path: Path):
+    """Comparing a file with itself should report no differences."""
+    a = tmp_path / "a.env"
+    a.write_text(LEFT)
+    result = compare_env_files(a, a)
+    assert not result.has_differences
 
 
 # --- compare_vault_with_snapshot ---
