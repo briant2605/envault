@@ -50,6 +50,14 @@ envault snapshot delete .env 20240601T120000
 
 Permanently removes the specified snapshot file.
 
+### Diff a snapshot
+
+```bash
+envault snapshot diff .env 20240601T120000 --password yourpassword
+```
+
+Shows the differences between the current vault and the specified snapshot, without restoring it. Useful for reviewing what changed before deciding whether to restore.
+
 ## Storage
 
 Snapshots are stored as encrypted vault files under:
@@ -65,3 +73,4 @@ They use the same encryption as the main vault, so the same password is required
 - Snapshots are **not** automatically created — you must save them explicitly.
 - Snapshot IDs are UTC timestamps in `YYYYMMDDTHHMMSS` format, with an optional label appended.
 - Restoring a snapshot does **not** affect the audit log — a restore event is recorded.
+- Deleting a snapshot is **permanent** and cannot be undone.
